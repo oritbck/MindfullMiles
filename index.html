@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindfulMiles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 flex items-start justify-center p-2">
+    <div id="app" class="w-full max-w-md p-4 rounded-lg shadow-lg text-white bg-gradient-to-l from-blue-600 to-green-700">
+        <div class="flex flex-col items-center mt-4 mb-4">
+            <div class="logo-container mb-1">
+                <div class="bird-logo"></div>
+            </div>
+            <h1 class="text-3xl app-title text-center">MindfulMiles</h1>
+        </div>
+
+        <!-- Plan View -->
+        <div id="planView" class="space-y-3 text-right">
+            <div class="bg-white/20 rounded-lg p-3">
+                <h3 class="text-xl font-semibold mb-2">סביבת הליכה</h3>
+                <div class="grid grid-cols-4 gap-2" id="environments">
+                    <button data-env="forest" class="p-2 rounded border-2 border-white bg-white/20 flex flex-col items-center">
+                        <span class="text-3xl mb-1">🌳</span>
+                        <span class="text-lg font-medium">יער</span>
+                    </button>
+                    <button data-env="beach" class="p-2 rounded border-2 border-white bg-white/20 flex flex-col items-center">
+                        <span class="text-3xl mb-1">🏖️</span>
+                        <span class="text-lg">חוף</span>
+                    </button>
+                    <button data-env="mountain" class="p-2 rounded border-2 border-white bg-white/20 flex flex-col items-center">
+                        <span class="text-3xl mb-1">⛰️</span>
+                        <span class="text-lg">הרים</span>
+                    </button>
+                    <button data-env="city" class="p-2 rounded border-2 border-white bg-white/20 flex flex-col items-center">
+                        <span class="text-3xl mb-1">🏙️</span>
+                        <span class="text-lg">עיר</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white/20 rounded-lg p-3">
+                <h3 class="text-xl font-semibold mb-2">מוסיקת רקע</h3>
+                <div class="grid grid-cols-4 gap-2" id="music">
+                    <button data-music="meditation" class="p-2 rounded border-2 border-white bg-white/20 flex flex-col items-center">
+                        <span class="text-lg">מדיטציה</span>
+                    </button>
+                    <button data-music="nature" class="p-2 rounded border-2 border-white bg-white/20 flex flex-col items-center">
+                        <span class="text-lg">טבע</span>
+                    </button>
+                    <button data-music="ambient" class="p-2 rounded border-2 border-white bg-white/20 flex flex-col items-center">
+                        <span class="text-lg">אווירה</span>
+                    </button>
+                    <button data-music="piano" class="p-2 rounded border-2 border-white bg-white/20 flex flex-col items-center">
+                        <span class="text-lg">פסנתר</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white/20 rounded-lg p-3">
+                <h3 class="text-xl font-semibold mb-2">משך ההליכה</h3>
+                <div class="grid grid-cols-4 gap-2" id="durations">
+                    <button data-duration="300" class="p-2 rounded border-2 border-white bg-white/20 text-lg font-medium">5 דקות</button>
+                    <button data-duration="600" class="p-2 rounded border-2 border-white bg-white/20 text-lg">10 דקות</button>
+                    <button data-duration="900" class="p-2 rounded border-2 border-white bg-white/20 text-lg">15 דקות</button>
+                    <button data-duration="1200" class="p-2 rounded border-2 border-white bg-white/20 text-lg">20 דקות</button>
+                </div>
+            </div>
+
+            <div class="bg-white/20 rounded-lg p-3">
+                <h3 class="text-xl font-semibold mb-2">איך את.ה מרגיש.ה?</h3>
+                <div class="grid grid-cols-5 gap-2" id="preMoods">
+                    <button data-mood="great" class="p-2 text-3xl rounded border-2 border-white bg-white/20">😃</button>
+                    <button data-mood="good" class="p-2 text-3xl rounded border-2 border-white bg-white/20">🙂</button>
+                    <button data-mood="neutral" class="p-2 text-3xl rounded border-2 border-white bg-white/20">😐</button>
+                    <button data-mood="bad" class="p-2 text-3xl rounded border-2 border-white bg-white/20">🙁</button>
+                    <button data-mood="terrible" class="p-2 text-3xl rounded border-2 border-white bg-white/20">😢</button>
+                </div>
+            </div>
+
+            <button id="startButton" class="w-full p-4 bg-white rounded border border-white hover:bg-white/90 transition-all text-2xl font-medium text-blue-600 flex items-center justify-center gap-3">
+                <span class="text-3xl">🚶</span>
+                <span>מתחילים ללכת</span>
+            </button>
+        </div>
+
+        <!-- Timer View -->
+        <div id="timerView" class="space-y-4 hidden">
+            <div id="timer" class="text-6xl font-bold text-center">00:00</div>
+            <div id="prompt" class="bg-white/20 p-3 rounded-lg text-lg text-right"></div>
+            <div class="w-full bg-white/20 rounded-full h-2">
+                <div id="progress" class="bg-white h-full rounded-full transition-all" style="width: 0%"></div>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="flex justify-center gap-4">
+                    <button id="skipBackward" class="p-4 bg-white/20 rounded-lg hover:bg-white/30 text-3xl">⏩</button>
+                    <button id="playPause" class="p-4 bg-white/20 rounded-lg hover:bg-white/30 text-3xl">⏸️</button>
+                    <button id="reset" class="p-4 bg-white/20 rounded-lg hover:bg-white/30 text-3xl">🔄</button>
+                    <button id="skipForward" class="p-4 bg-white/20 rounded-lg hover:bg-white/30 text-3xl">⏪</button>
+                </div>
+                <div class="flex justify-center gap-4">
+                    <button id="toggleSound" class="p-4 bg-white/20 rounded-lg hover:bg-white/30 text-3xl">🔊</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion View -->
+        <div id="completionView" class="space-y-4 text-right hidden">
+            <h2 class="text-xl font-bold text-center">סיימת את ההליכה!</h2>
+            
+            <div class="bg-white/20 rounded-lg p-3">
+                <h3 class="text-base font-semibold mb-2">איך את.ה מרגיש.ה עכשיו?</h3>
+                <div class="grid grid-cols-5 gap-2" id="postMoods">
+                    <button data-mood="great" class="p-2 text-3xl rounded border-2 border-white bg-white/20">😃</button>
+                    <button data-mood="good" class="p-2 text-3xl rounded border-2 border-white bg-white/20">🙂</button>
+                    <button data-mood="neutral" class="p-2 text-3xl rounded border-2 border-white bg-white/20">😐</button>
+                    <button data-mood="bad" class="p-2 text-3xl rounded border-2 border-white bg-white/20">🙁</button>
+                    <button data-mood="terrible" class="p-2 text-3xl rounded border-2 border-white bg-white/20">😢</button>
+                </div>
+            </div>
+
+            <button id="completeButton" class="w-full p-3 bg-white/20 rounded border-2 border-white hover:bg-white/30 transition-all text-xl font-medium">
+                שמור.י וסיים.י
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            view: 'plan',
+            selectedEnvironment: null,
+            selectedDuration: null,
+            selectedPreMood: null,
+            selectedPostMood: null,
+            time: 0,
+            isRunning: false,
+            currentPrompt: '',
+            isSoundOn: false,
+            lastPromptTime: 0,
+            timerInterval: null,
+            selectedMusic: null,
+            audioPlayer: null,
+            usedPrompts: new Set()
+        };
+
+        const environmentPrompts = {
+            forest: [
+                "הקשיבו לרשרוש העלים ברוח",
+                "שימו לב לריח האדמה והעצים",
+                "הביטו בצורות שיוצרים הענפים",
+                "שימו לב לצלליות העצים על השביל",
+                "הקשיבו לציוץ הציפורים בין העצים",
+                "הרגישו את המרקם של האדמה מתחת לרגליים",
+                "התמקדו בתנועת הענפים ברוח",
+                "שימו לב לקרני השמש המבצבצות בין העלים",
+                "הקשיבו לצלילים העדינים של היער",
+                "נסו להבחין בריחות השונים סביבכם"
+            ],
+            beach: [
+                "הקשיבו לקול הגלים",
+                "הרגישו את החול תחת כפות הרגליים",
+                "שימו לב לרוח הים על פניכם",
+                "התבוננו בתנועת הגלים",
+                "הריחו את אוויר הים והאדמה",
+                "הקשיבו למקצב של הגלים הנשברים",
+                "שימו לב לתחושת המלח באוויר",
+                "התמקדו בתנועת הציפורים מעל הים",
+                "הרגישו את החום של השמש על עורכם",
+                "התבוננו במשחק האור על פני המים"
+            ],
+            mountain: [
+                "שימו לב לשינויי הגובה בשביל",
+                "הרגישו את האוויר הצלול והקריר",
+                "התבוננו בנוף המתגלה מסביב",
+                "הקשיבו להד של צעדיכם",
+                "שימו לב לסלעים לאורך השביל",
+                "הרגישו את השינויים בטמפרטורה עם העלייה",
+                "התמקדו בתחושת השרירים בעת הטיפוס",
+                "שימו לב לצמחייה המשתנה עם הגובה",
+                "הקשיבו לדממה המיוחדת של ההר",
+                "התבוננו בעננים הקרובים אליכם"
+            ],
+            city: [
+                "שימו לב לפרטים הקטנים בבניינים",
+                "הקשיבו למקצב של צעדיכם על המדרכה",
+                "חפשו פינות ירוקות בין הבניינים",
+                "הביטו בדפוסי האור והצל ברחוב",
+                "שימו לב לריחות מבתי הקפה והמסעדות",
+                "התמקדו בצבעים השונים של חזיתות הבתים",
+                "הקשיבו לצלילי החיים העירוניים",
+                "שימו לב לאנשים החולפים על פניכם",
+                "חפשו פרטי אדריכלות מעניינים",
+                "התבוננו באור השמש המשתקף בחלונות"
+            ]
+        };
+
+        const musicTracks = {
+            meditation: "https://cdn.pixabay.com/download/audio/2024/09/08/audio_071abbb237.mp3?filename=meditation-amp-relax-238980.mp3",
+            nature: "https://cdn.pixabay.com/download/audio/2024/09/03/audio_0368e10ce2.mp3?filename=acoustic-nature-237840.mp3",
+            ambient: "https://cdn.pixabay.com/download/audio/2024/01/05/audio_df760de79f.mp3?filename=midnight-forest-184304.mp3",
+            piano: "https://cdn.pixabay.com/download/audio/2024/10/14/audio_154ba2a203.mp3?filename=evening-snowfall-soft-winter-piano-music-250829.mp3"
+        };
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updatePrompt() {
+            if (state.selectedEnvironment) {
+                const prompts = environmentPrompts[state.selectedEnvironment];
+                
+                if (state.usedPrompts.size >= prompts.length) {
+                    state.usedPrompts.clear();
+                }
+                
+                let availablePrompts = prompts.filter(prompt => !state.usedPrompts.has(prompt));
+                let newPrompt = availablePrompts[Math.floor(Math.random() * availablePrompts.length)];
+                
+                state.currentPrompt = newPrompt;
+                state.usedPrompts.add(newPrompt);
+                document.getElementById('prompt').textContent = newPrompt;
+            }
+        }
+
+        function setView(view) {
+            document.getElementById('planView').classList.toggle('hidden', view !== 'plan');
+            document.getElementById('timerView').classList.toggle('hidden', view !== 'timer');
+            document.getElementById('completionView').classList.toggle('hidden', view !== 'completion');
+            state.view = view;
+        }
+
+        function startTimer() {
+            if (!state.selectedEnvironment || !state.selectedDuration || !state.selectedPreMood || !state.selectedMusic) {
+                alert("אנא מלא/י את כל השדות");
+                return;
+            }
+            
+            state.usedPrompts.clear();
+            state.currentPrompt = '';
+            state.lastPromptTime = 0;
+            state.time = 0;
+            state.isRunning = true;
+            state.isSoundOn = true;
+            document.getElementById('toggleSound').textContent = '🔊';
+            playMusic();
+            setView('timer');
+            updatePrompt();
+            startInterval();
+        }
+
+        function startInterval() {
+            state.timerInterval = setInterval(() => {
+                state.time++;
+                document.getElementById('timer').textContent = formatTime(state.time);
+                document.getElementById('progress').style.width = `${(state.time / state.selectedDuration) * 100}%`;
+                
+                if (state.time - state.lastPromptTime >= 120) {
+                    updatePrompt();
+                    state.lastPromptTime = state.time;
+                }
+                
+                if (state.time >= state.selectedDuration) {
+                    clearInterval(state.timerInterval);
+                    state.isRunning = false;
+                    setView('completion');
+                }
+            }, 1000);
+        }
+
+        function playMusic() {
+            if (state.selectedMusic && !state.audioPlayer) {
+                state.audioPlayer = new Audio(musicTracks[state.selectedMusic]);
+                state.audioPlayer.loop = true;
+                state.audioPlayer.volume = 0.3;
+                
+                state.audioPlayer.addEventListener('ended', () => {
+                    if (state.isSoundOn) {
+                        state.audioPlayer.currentTime = 0;
+                        state.audioPlayer.play().catch(error => {
+                            console.log("Auto-replay prevented:", error);
+                        });
+                    }
+                });
+                
+                state.audioPlayer.play().catch(error => {
+                    console.log("Auto-play prevented:", error);
+                    state.isSoundOn = false;
+                    document.getElementById('toggleSound').textContent = '🔇';
+                });
+            }
+        }
+
+        function stopMusic() {
+            if (state.audioPlayer) {
+                state.audioPlayer.pause();
+                state.audioPlayer = null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Environment buttons
+            document.querySelectorAll('#environments button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#environments button').forEach(b => {
+                        b.classList.remove('bg-white', 'text-blue-600');
+                        b.classList.add('bg-white/20');
+                    });
+                    button.classList.remove('bg-white/20');
+                    button.classList.add('bg-white', 'text-blue-600');
+                    state.selectedEnvironment = button.getAttribute('data-env');
+                    
+                    // Update app background based on environment
+                    const appElement = document.getElementById('app');
+                    appElement.className = `w-full max-w-md p-4 rounded-lg shadow-lg text-white bg-gradient-to-l ${
+                        state.selectedEnvironment === 'forest' ? 'from-green-700 to-green-900' :
+                        state.selectedEnvironment === 'beach' ? 'from-blue-600 to-blue-800' :
+                        state.selectedEnvironment === 'mountain' ? 'from-gray-700 to-gray-900' :
+                        state.selectedEnvironment === 'city' ? 'from-purple-800 to-purple-950' :
+                        'from-blue-600 to-green-700'
+                    }`;
+                });
+            });
+
+            // Duration buttons
+            document.querySelectorAll('#durations button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#durations button').forEach(b => {
+                        b.classList.remove('bg-white', 'text-blue-600');
+                        b.classList.add('bg-white/20');
+                    });
+                    button.classList.remove('bg-white/20');
+                    button.classList.add('bg-white', 'text-blue-600');
+                    state.selectedDuration = parseInt(button.getAttribute('data-duration'));
+                });
+            });
+
+            // Pre-mood buttons
+            document.querySelectorAll('#preMoods button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#preMoods button').forEach(b => {
+                        b.classList.remove('bg-white', 'transform', 'scale-110');
+                        b.classList.add('bg-white/20');
+                    });
+                    button.classList.remove('bg-white/20');
+                    button.classList.add('bg-white', 'transform', 'scale-110');
+                    state.selectedPreMood = button.getAttribute('data-mood');
+                });
+            });
+
+            // Post-mood buttons
+            document.querySelectorAll('#postMoods button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#postMoods button').forEach(b => {
+                        b.classList.remove('bg-white', 'transform', 'scale-110');
+                        b.classList.add('bg-white/20');
+                    });
+                    button.classList.remove('bg-white/20');
+                    button.classList.add('bg-white', 'transform', 'scale-110');
+                    state.selectedPostMood = button.getAttribute('data-mood');
+                });
+            });
+
+            // Music buttons
+            document.querySelectorAll('#music button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#music button').forEach(b => {
+                        b.classList.remove('bg-white', 'text-blue-600');
+                        b.classList.add('bg-white/20');
+                    });
+                    button.classList.remove('bg-white/20');
+                    button.classList.add('bg-white', 'text-blue-600');
+                    state.selectedMusic = button.getAttribute('data-music');
+                });
+            });
+
+            // Start button
+            document.getElementById('startButton').addEventListener('click', startTimer);
+
+            // Timer controls
+            document.getElementById('playPause').addEventListener('click', () => {
+                state.isRunning = !state.isRunning;
+                document.getElementById('playPause').textContent = state.isRunning ? '⏸️' : '▶️';
+                if (state.isRunning) {
+                    startInterval();
+                    if (state.audioPlayer) state.audioPlayer.play();
+                } else {
+                    clearInterval(state.timerInterval);
+                    if (state.audioPlayer) state.audioPlayer.pause();
+                }
+            });
+
+            document.getElementById('reset').addEventListener('click', () => {
+                state.time = 0;
+                state.lastPromptTime = 0;
+                document.getElementById('timer').textContent = formatTime(0);
+                document.getElementById('progress').style.width = '0%';
+            });
+
+            document.getElementById('skipForward').addEventListener('click', () => {
+                state.time = Math.min(state.selectedDuration, state.time + 30);
+                document.getElementById('timer').textContent = formatTime(state.time);
+                document.getElementById('progress').style.width = `${(state.time / state.selectedDuration) * 100}%`;
+            });
+
+            document.getElementById('skipBackward').addEventListener('click', () => {
+                state.time = Math.max(0, state.time - 30);
+                document.getElementById('timer').textContent = formatTime(state.time);
+                document.getElementById('progress').style.width = `${(state.time / state.selectedDuration) * 100}%`;
+            });
+
+            document.getElementById('toggleSound').addEventListener('click', () => {
+                state.isSoundOn = !state.isSoundOn;
+                document.getElementById('toggleSound').textContent = state.isSoundOn ? '🔊' : '🔇';
+                
+                if (state.audioPlayer) {
+                    if (state.isSoundOn) {
+                        state.audioPlayer.play();
+                    } else {
+                        state.audioPlayer.pause();
+                    }
+                }
+            });
+
+            // Complete button
+            document.getElementById('completeButton').addEventListener('click', async () => {
+                if (!state.selectedPostMood) {
+                    alert("אנא בחר.י איך את.ה מרגיש.ה");
+                    return;
+                }
+                
+                // Fetch the prompt template
+                const promptTemplate = await fetchPrompt();
+                
+                // Create ChatGPT link based on the session
+                const moodChange = getMoodChange(state.selectedPreMood, state.selectedPostMood);
+                const environment = state.selectedEnvironment;
+                const duration = state.selectedDuration / 60;
+                
+                const chatGPTPrompt = encodeURIComponent(promptTemplate);
+                
+                // Add ChatGPT link to completion view
+                const chatgptLink = document.createElement('a');
+                chatgptLink.href = `https://chatgpt.com/?q=${chatGPTPrompt}`;
+                chatgptLink.target = '_blank';
+                chatgptLink.className = 'block w-full p-4 bg-white/20 rounded border-2 border-white hover:bg-white/30 transition-all text-lg text-center mt-4';
+                chatgptLink.textContent = 'המשך שיחה עם ChatGPT על החוויה שלך בהליכה';
+                
+                // Replace the complete button with the ChatGPT link and a new "Return to Start" button
+                const completeButton = document.getElementById('completeButton');
+                const returnButton = document.createElement('button');
+                returnButton.className = 'w-full p-4 bg-white/20 rounded border-2 border-white hover:bg-white/30 transition-all text-lg mt-4';
+                returnButton.textContent = 'חזור למסך הראשי';
+                
+                const buttonContainer = completeButton.parentNode;
+                buttonContainer.innerHTML = ''; // Clear existing buttons
+                buttonContainer.appendChild(chatgptLink);
+                buttonContainer.appendChild(returnButton);
+                
+                stopMusic();
+                
+                // Add click handler for the return button
+                returnButton.addEventListener('click', () => {
+                    // Reset state
+                    state.selectedEnvironment = null;
+                    state.selectedDuration = null;
+                    state.selectedPreMood = null;
+                    state.selectedPostMood = null;
+                    state.time = 0;
+                    state.lastPromptTime = 0;
+                    state.isRunning = false;
+                    state.isSoundOn = false;
+                    
+                    // Reset UI
+                    document.querySelectorAll('#environments button, #durations button, #preMoods button')
+                        .forEach(button => {
+                            button.classList.remove('bg-white', 'text-blue-600', 'transform', 'scale-110');
+                            button.classList.add('bg-white/20');
+                        });
+                    
+                    // Reset app background
+                    document.getElementById('app').className = 'w-full max-w-md p-4 rounded-lg shadow-lg text-white bg-gradient-to-l from-blue-600 to-green-700';
+                    
+                    setView('plan');
+                });
+            });
+        });
+
+        // Helper function to get mood change description
+        function getMoodChange(preMood, postMood) {
+            const moodValues = {
+                'terrible': 1,
+                'bad': 2,
+                'neutral': 3,
+                'good': 4,
+                'great': 5
+            };
+            
+            const change = moodValues[postMood] - moodValues[preMood];
+            if (change > 0) return 'improved';
+            if (change < 0) return 'declined';
+            return 'stayed the same';
+        }
+
+        // Add the prompt template as a constant
+        const PROMPT_TEMPLATE = `אתה צ'טבוט מאמן ספורט טיפולי במרכז לבריאות הנפש. כל הכבוד! אני רואה שסיימת {{DURATION}} דקות הליכה בסביבת {{ENVIRONMENT}} ומצב רוחך {{MOOD_CHANGE}} (מ-{{PRE_MOOD}} ל-{{POST_MOOD}}). בחרת להקשיב למוסיקת {{MUSIC_TYPE}}.
+
+תפקידך לשוחח עם המטופלים על חווית ההליכה שסיימו באמצעות האפליקציה, בה בחרו מוסיקה, סביבה מדומיינת, משך זמן, וסימנו מצב רוח לפני ואחרי.
+
+הנחיות:
+1. הוסף עובדה אחת על פעילות גופנית אחרי משפט הפתיחה 
+2. שוחח במשך 3-4 הודעות בלבד
+3. שמור על שיחה קלילה וממוקדת
+
+נושאים אפשריים:
+- מה מסייע לך להתמיד בפעילות
+- שינויים במצב הרוח ומחשבות
+- תכנון ההליכה הבאה
+
+בכל תשובה התמקד בנושא אחד והצע שאלה או הצעה להמשך. הימנע מהצפת מידע או שאלות מרובות.
+
+לאחר 3-4 הודעות סכם את השיחה, עודד את המשתמש ותן טיפים ממוקדים להתמדה בפעילות גופנית.`;
+
+        // Update the fetchPrompt function to use the template
+        async function fetchPrompt() {
+            try {
+                let promptText = PROMPT_TEMPLATE;
+                
+                // Replace variables with actual values
+                const replacements = {
+                    '{{DURATION}}': state.selectedDuration / 60,
+                    '{{ENVIRONMENT}}': state.selectedEnvironment,
+                    '{{MOOD_CHANGE}}': getMoodChange(state.selectedPreMood, state.selectedPostMood),
+                    '{{PRE_MOOD}}': state.selectedPreMood,
+                    '{{POST_MOOD}}': state.selectedPostMood,
+                    '{{MUSIC_TYPE}}': state.selectedMusic
+                };
+                
+                // Replace all placeholders with their values
+                for (const [placeholder, value] of Object.entries(replacements)) {
+                    promptText = promptText.replace(placeholder, value);
+                }
+                
+                return promptText;
+            } catch (error) {
+                console.error('Error processing prompt:', error);
+                return 'אני רואה שסיימת הליכה. איך היתה החוויה?';
+            }
+        }
+    </script>
+</body>
+</html>
