@@ -85,7 +85,7 @@
                 </div>
             </div>
 
-            <button id="startButton" class="w-full p-4 bg-white rounded border border-white hover:bg-white/90 transition-all text-2xl font-medium text-blue-600 flex items-center justify-center gap-3">
+            <button id="startButton" class="w-full p-4 bg-white rounded-lg border-4 border-blue-600 hover:bg-blue-50 transition-all text-2xl font-bold text-blue-600 flex items-center justify-center gap-3 shadow-lg">
                 <span class="text-3xl">🚶</span>
                 <span>מתחילים ללכת</span>
             </button>
@@ -116,7 +116,7 @@
             <h2 class="text-xl font-bold text-center">סיימת את ההליכה!</h2>
             
             <div class="bg-white/20 rounded-lg p-3">
-                <h3 class="text-base font-semibold mb-2">איך את.ה מרגיש.ה עכשיו?</h3>
+                <h3 class="text-xl font-semibold mb-2">איך את.ה מרגיש.ה עכשיו?</h3>
                 <div class="grid grid-cols-5 gap-2" id="postMoods">
                     <button data-mood="great" class="p-2 text-3xl rounded border-2 border-white bg-white/20">😃</button>
                     <button data-mood="good" class="p-2 text-3xl rounded border-2 border-white bg-white/20">🙂</button>
@@ -127,7 +127,7 @@
             </div>
 
             <button id="completeButton" class="w-full p-3 bg-white/20 rounded border-2 border-white hover:bg-white/30 transition-all text-xl font-medium">
-                שמור.י וסיים.י
+                לשמור ולסיים
             </button>
         </div>
     </div>
@@ -437,28 +437,22 @@
                     return;
                 }
                 
-                // Fetch the prompt template
-                const promptTemplate = await fetchPrompt();
-                
-                // Create ChatGPT link based on the session
-                const moodChange = getMoodChange(state.selectedPreMood, state.selectedPostMood);
-                const environment = state.selectedEnvironment;
-                const duration = state.selectedDuration / 60;
-                
-                const chatGPTPrompt = encodeURIComponent(promptTemplate);
-                
                 // Add ChatGPT link to completion view
                 const chatgptLink = document.createElement('a');
-                chatgptLink.href = `https://chatgpt.com/?q=${chatGPTPrompt}`;
+                chatgptLink.href = 'https://chatgpt.com/g/g-67680e0cd750819195d6062424a92970-ntyb';
                 chatgptLink.target = '_blank';
-                chatgptLink.className = 'block w-full p-4 bg-white/20 rounded border-2 border-white hover:bg-white/30 transition-all text-lg text-center mt-4';
-                chatgptLink.textContent = 'המשך שיחה עם ChatGPT על החוויה שלך בהליכה';
+                chatgptLink.className = 'block w-full p-4 bg-white/20 rounded border-2 border-white hover:bg-white/30 transition-all text-lg text-center mt-4 flex items-center justify-between gap-2';
+                chatgptLink.innerHTML = `
+                    <span class="flex-1 text-right">המשך לשיחה עם נתיב מאמן הכושר הוירטואלי על החוויה שלך באימון</span>
+                    <span class="text-3xl">🗣️</span>
+                `;
                 
-                // Replace the complete button with the ChatGPT link and a new "Return to Start" button
-                const completeButton = document.getElementById('completeButton');
                 const returnButton = document.createElement('button');
-                returnButton.className = 'w-full p-4 bg-white/20 rounded border-2 border-white hover:bg-white/30 transition-all text-lg mt-4';
-                returnButton.textContent = 'חזור למסך הראשי';
+                returnButton.className = 'w-full p-4 bg-white/20 rounded border-2 border-white hover:bg-white/30 transition-all text-xl mt-4 flex items-center justify-between gap-2';
+                returnButton.innerHTML = `
+                    <span class="flex-1 text-right">חזור למסך הראשי</span>
+                    <span class="text-3xl">🏠</span>
+                `;
                 
                 const buttonContainer = completeButton.parentNode;
                 buttonContainer.innerHTML = ''; // Clear existing buttons
@@ -479,8 +473,8 @@
                     state.isRunning = false;
                     state.isSoundOn = false;
                     
-                    // Reset UI
-                    document.querySelectorAll('#environments button, #durations button, #preMoods button')
+                    // Reset UI - add music buttons to the selector
+                    document.querySelectorAll('#environments button, #durations button, #preMoods button, #music button')
                         .forEach(button => {
                             button.classList.remove('bg-white', 'text-blue-600', 'transform', 'scale-110');
                             button.classList.add('bg-white/20');
@@ -493,68 +487,6 @@
                 });
             });
         });
-
-        // Helper function to get mood change description
-        function getMoodChange(preMood, postMood) {
-            const moodValues = {
-                'terrible': 1,
-                'bad': 2,
-                'neutral': 3,
-                'good': 4,
-                'great': 5
-            };
-            
-            const change = moodValues[postMood] - moodValues[preMood];
-            if (change > 0) return 'improved';
-            if (change < 0) return 'declined';
-            return 'stayed the same';
-        }
-
-        // Add the prompt template as a constant
-        const PROMPT_TEMPLATE = `אתה צ'טבוט מאמן ספורט טיפולי במרכז לבריאות הנפש. כל הכבוד! אני רואה שסיימת {{DURATION}} דקות הליכה בסביבת {{ENVIRONMENT}} ומצב רוחך {{MOOD_CHANGE}} (מ-{{PRE_MOOD}} ל-{{POST_MOOD}}). בחרת להקשיב למוסיקת {{MUSIC_TYPE}}.
-
-תפקידך לשוחח עם המטופלים על חווית ההליכה שסיימו באמצעות האפליקציה, בה בחרו מוסיקה, סביבה מדומיינת, משך זמן, וסימנו מצב רוח לפני ואחרי.
-
-הנחיות:
-1. הוסף עובדה אחת על פעילות גופנית אחרי משפט הפתיחה 
-2. שוחח במשך 3-4 הודעות בלבד
-3. שמור על שיחה קלילה וממוקדת
-
-נושאים אפשריים:
-- מה מסייע לך להתמיד בפעילות
-- שינויים במצב הרוח ומחשבות
-- תכנון ההליכה הבאה
-
-בכל תשובה התמקד בנושא אחד והצע שאלה או הצעה להמשך. הימנע מהצפת מידע או שאלות מרובות.
-
-לאחר 3-4 הודעות סכם את השיחה, עודד את המשתמש ותן טיפים ממוקדים להתמדה בפעילות גופנית.`;
-
-        // Update the fetchPrompt function to use the template
-        async function fetchPrompt() {
-            try {
-                let promptText = PROMPT_TEMPLATE;
-                
-                // Replace variables with actual values
-                const replacements = {
-                    '{{DURATION}}': state.selectedDuration / 60,
-                    '{{ENVIRONMENT}}': state.selectedEnvironment,
-                    '{{MOOD_CHANGE}}': getMoodChange(state.selectedPreMood, state.selectedPostMood),
-                    '{{PRE_MOOD}}': state.selectedPreMood,
-                    '{{POST_MOOD}}': state.selectedPostMood,
-                    '{{MUSIC_TYPE}}': state.selectedMusic
-                };
-                
-                // Replace all placeholders with their values
-                for (const [placeholder, value] of Object.entries(replacements)) {
-                    promptText = promptText.replace(placeholder, value);
-                }
-                
-                return promptText;
-            } catch (error) {
-                console.error('Error processing prompt:', error);
-                return 'אני רואה שסיימת הליכה. איך היתה החוויה?';
-            }
-        }
     </script>
 </body>
 </html>
